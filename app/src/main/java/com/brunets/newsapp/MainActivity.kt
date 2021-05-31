@@ -1,17 +1,17 @@
 package com.brunets.newsapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.Observer
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.PagedList
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.brunets.newsapp.adapter.ArticleAdapter
-import com.brunets.newsapp.data.model.Article
+import com.brunets.newsapp.adapter.ArticleLoadStateAdapter
 import com.brunets.newsapp.databinding.ActivityMainBinding
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -30,19 +30,44 @@ class MainActivity : AppCompatActivity() {
         })
         binding.articlesList.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            val decoration = DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL)
+            setHasFixedSize(true)
+            val decoration =
+                DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL)
             addItemDecoration(decoration)
+            adapter = articleAdapter.withLoadStateFooter(
+                footer = ArticleLoadStateAdapter {
+                    articleAdapter.retry()
+                }
+            )
         }
-//        viewModel.articles.observe(this, Observer<ArrayList<Article>>{
-//            articleAdapter.submitList(it)
-//        })
+        lifecycleScope.launch {
+            viewModel.articlesFlow.collect {
+                articleAdapter.submitData(it)
+            }
+        }
+        articleAdapter.addLoadStateListener { loadState ->
 
-       lifecycleScope.launch {
-           viewModel.articlesFlow.collectLatest {
-               articleAdapter.submitData(it)
-           }
-       }
+            if (loadState.refresh is LoadState.Loading ||
+                loadState.append is LoadState.Loading
+            )
+            // Show ProgressBar
+            else {
+                // Hide ProgressBar
 
-        binding.articlesList.setAdapter(articleAdapter)
+                // If we have an error, show a toast
+                val errorState = when {
+                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                    loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
+                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    Toast.makeText(this, it.error.toString(), Toast.LENGTH_LONG).show()
+                }
+
+            }
+        }
+
+
     }
 }

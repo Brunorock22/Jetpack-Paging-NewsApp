@@ -1,0 +1,56 @@
+package com.brunets.newsapp.adapter
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.paging.LoadState
+import androidx.paging.LoadStateAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.brunets.newsapp.databinding.LoadingStateItemBinding
+
+class ArticleLoadStateAdapter(private val retry: () -> Unit?) :
+    LoadStateAdapter<ArticleLoadStateAdapter.ArticleLoadStateViewHolder>() {
+
+    class ArticleLoadStateViewHolder(
+        private val binding: LoadingStateItemBinding,
+        private val loadState: LoadState
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(retry: () -> Unit?) {
+            binding.run {
+                val progress = loadStateProgress
+                val btnRetry = loadStateProgress
+                val txtErrorMessage = loadStateErrorMessage
+
+                btnRetry.isVisible = loadState !is LoadState.Loading
+                txtErrorMessage.isVisible = loadState !is LoadState.Loading
+                progress.isVisible = loadState is LoadState.Loading
+
+                if (loadState is LoadState.Error) {
+                    txtErrorMessage.text = loadState.error.localizedMessage
+                }
+
+                btnRetry.setOnClickListener {
+                    retry.invoke()
+                }
+            }
+        }
+    }
+
+
+    override fun onBindViewHolder(holder: ArticleLoadStateViewHolder, loadState: LoadState) {
+        holder.bind(retry)
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        loadState: LoadState
+    ): ArticleLoadStateViewHolder {
+        val itemBinding = LoadingStateItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ArticleLoadStateViewHolder(itemBinding, loadState)
+    }
+}
