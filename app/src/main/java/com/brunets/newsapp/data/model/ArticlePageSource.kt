@@ -16,7 +16,7 @@ class ArticlePageSource(val apiService: NewsApi): PagingSource<Int, Article>() {
             val page = params.key ?: DEFAULT_PAGE_INDEX
             val response = apiService.getNews(
                 company = "apple",
-                pageSize = "1",
+                pageSize = "20",
                 page = page.toString()
             )
 

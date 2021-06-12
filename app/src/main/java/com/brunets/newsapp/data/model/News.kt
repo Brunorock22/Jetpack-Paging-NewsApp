@@ -1,8 +1,6 @@
 package com.brunets.newsapp.data.model
 
-import androidx.paging.PagedList
-
-data class New(
+data class News(
     val articles: List<Article>,
     val status: String,
     val totalResults: Int

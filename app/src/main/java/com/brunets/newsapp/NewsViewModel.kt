@@ -16,30 +16,8 @@ class NewsViewModel : ViewModel() {
 
     val articles = MutableLiveData<ArrayList<Article>>()
 
-    val articlesFlow: Flow<PagingData<Article>> = Pager(PagingConfig(pageSize = 20)) {
+    val articlesFlow: Flow<PagingData<Article>> = Pager(PagingConfig(pageSize = 10)) {
         ArticlePageSource(NewsClient.service)
     }.flow
         .cachedIn(viewModelScope)
-
-
-//    @SuppressLint("CheckResult")
-//    fun getNews(page: String) {
-//        NewsClient.service.getNews(company = "apple", pageSize = "10", page = page)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({ new ->
-//                articles.value?.let {
-//                    val addedArticle: PagedList<Article>? = articles.value
-//                    addedArticle?.addAll(new.articles)
-//                    articles.value = addedArticle
-//                } ?: run {
-//                    articles.value = new.articles
-//                }
-//            }, { e ->
-//                e.printStackTrace()
-//            }, {
-//                print("CABO")
-//            }
-//            )
-//    }
 }
