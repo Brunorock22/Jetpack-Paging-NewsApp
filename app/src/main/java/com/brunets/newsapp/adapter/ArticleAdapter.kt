@@ -7,16 +7,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.brunets.newsapp.data.model.Article
 import com.brunets.newsapp.databinding.ArticleItemBinding
-import com.brunets.newsapp.util.loadImg
+import javax.inject.Inject
 
-class ArticleAdapter : PagingDataAdapter<Article, ArticleAdapter.ArticleViewHolder>(DIFF_CALLBACK) {
+class ArticleAdapter @Inject constructor(): PagingDataAdapter<Article, ArticleAdapter.ArticleViewHolder>(DIFF_CALLBACK) {
     class ArticleViewHolder(private val binding: ArticleItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(article: Article) {
             binding.run {
                 content.text = article.content
-                newsBreakingImg.loadImg(article.urlToImage)
+//                newsBreakingImg.loadImg(article.urlToImage)
 
             }
         }

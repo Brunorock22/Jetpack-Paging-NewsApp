@@ -4,10 +4,11 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
 
-object NewsClient {
-    private const val BASE_URL = "https://newsapi.org/"
+class NewsClient @Inject constructor() {
+    private val BASE_URL = "https://newsapi.org/"
     private fun initClient(): Retrofit {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY

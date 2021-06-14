@@ -11,14 +11,16 @@
         android:layout_height="120dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/content"
-        android:padding="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/news_breaking_img"
         android:layout_width="0dp"
-        android:textSize="20sp"
         android:layout_height="wrap_content"
-        tool:text="Bruno"/>
-
+        android:padding="10dp"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/news_breaking_img"
+        app:layout_constraintTop_toTopOf="parent"
+        tool:text="Apple Exec Calls Mac Malware Levels Unacceptable Under Oath" />
 </androidx.constraintlayout.widget.ConstraintLayout>

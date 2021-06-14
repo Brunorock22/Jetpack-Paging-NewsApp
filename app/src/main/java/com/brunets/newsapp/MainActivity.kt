@@ -2,8 +2,8 @@ package com.brunets.newsapp
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -11,19 +11,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.brunets.newsapp.adapter.ArticleAdapter
 import com.brunets.newsapp.adapter.ArticleLoadStateAdapter
 import com.brunets.newsapp.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewModel: NewsViewModel
-    private val articleAdapter = ArticleAdapter()
+    private val viewModel: NewsViewModel by viewModels()
+
+    @Inject
+    lateinit var articleAdapter: ArticleAdapter
+
     private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider.NewInstanceFactory().create(NewsViewModel::class.java)
 
         viewModel.articles.observe(this, {
             print(it)
@@ -34,18 +40,18 @@ class MainActivity : AppCompatActivity() {
             val decoration =
                 DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL)
             addItemDecoration(decoration)
-            adapter = articleAdapter.withLoadStateFooter(
+            adapter = articleAdapter?.withLoadStateFooter(
                 footer = ArticleLoadStateAdapter {
-                    articleAdapter.retry()
+                    articleAdapter?.retry()
                 }
             )
         }
         lifecycleScope.launch {
             viewModel.articlesFlow.collect {
-                articleAdapter.submitData(it)
+                articleAdapter?.submitData(it)
             }
         }
-        articleAdapter.addLoadStateListener { loadState ->
+        articleAdapter?.addLoadStateListener { loadState ->
 
             if (loadState.refresh is LoadState.Loading ||
                 loadState.append is LoadState.Loading

@@ -20,7 +20,7 @@ class ArticlePageSource(private val apiService: NewsApi) : PagingSource<Int, Art
                 company = "apple",
                 pageSize = "20",
                 page = page.toString()
-            )
+            ).body()!!
 
             LoadResult.Page(
                 response.articles, prevKey = if (page == DEFAULT_PAGE_INDEX) null else page - 1,
